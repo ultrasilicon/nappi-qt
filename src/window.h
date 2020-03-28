@@ -6,13 +6,13 @@
 #include <QSystemTrayIcon>
 #include <QUdpSocket>
 
-class Widget : public QWidget
+class Window : public QWidget
 {
   Q_OBJECT
 
 public:
-  Widget(QWidget *parent = nullptr);
-  ~Widget();
+  Window(QWidget *parent = nullptr);
+  ~Window();
 
 private:
   QMenu *tray_icon_menu;

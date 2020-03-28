@@ -1,11 +1,11 @@
-#include "widget.h"
+#include "window.h"
 
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
 
 
-Widget::Widget(QWidget *parent)
+Window::Window(QWidget *parent)
   : QWidget(parent)
   , tray_icon_menu(new QMenu(this))
   , wake_action(new QAction(tr("Stay &Awake"), this))
@@ -42,7 +42,7 @@ Widget::Widget(QWidget *parent)
   this->setWindowTitle("nappi");
 }
 
-Widget::~Widget()
+Window::~Window()
 {
 }
 

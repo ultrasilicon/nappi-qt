@@ -1,4 +1,4 @@
-#include "widget.h"
+#include "window.h"
 
 #include <QApplication>
 
@@ -6,6 +6,6 @@ int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
   QApplication::setQuitOnLastWindowClosed(false);
-  Widget w;
+  Window w;
   return a.exec();
 }
