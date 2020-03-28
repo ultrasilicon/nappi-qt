@@ -21,7 +21,7 @@ Window::Window(QWidget *parent)
   tray_icon_menu->addSeparator();
   tray_icon_menu->addAction(quit_action);
 
-  QIcon icon(":/img/img/icon_tray.png");
+  QIcon icon(":/img/img/icon_tray_black.png");
   icon.setIsMask(true);
   tray_icon->setIcon(icon);
   tray_icon->setToolTip("nappi");
