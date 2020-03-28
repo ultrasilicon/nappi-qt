@@ -2,6 +2,8 @@
 
 #include <QTimer>
 #include <QDebug>
+#include <QCoreApplication>
+
 
 Widget::Widget(QWidget *parent)
   : QWidget(parent)
@@ -15,14 +17,20 @@ Widget::Widget(QWidget *parent)
   wake_action->setCheckable(true);
   wake_action->setChecked(false);
 //  tray_icon_menu->addAction(wake_action);
-//  tray_icon_menu->addAction(show_action);
-//  tray_icon_menu->addSeparator();
+  tray_icon_menu->addAction(show_action);
+  tray_icon_menu->addSeparator();
   tray_icon_menu->addAction(quit_action);
-  tray_icon->setIcon(QIcon(":/img/img/icon_tray.png"));
+
+  QIcon icon(":/img/img/icon_tray.png");
+  icon.setIsMask(true);
+  tray_icon->setIcon(icon);
   tray_icon->setToolTip("nappi");
   tray_icon->setContextMenu(tray_icon_menu);
   tray_icon->setVisible(true);
   tray_icon->show();
+
+  connect(quit_action, &QAction::triggered, this, &QCoreApplication::quit);
+  connect(show_action, &QAction::triggered, this, &QWidget::show);
 
   QTimer* timer = new QTimer(this);
   connect(timer, &QTimer::timeout, [&](){
@@ -31,6 +39,7 @@ Widget::Widget(QWidget *parent)
   timer->setInterval(300);
   timer->start();
 
+  this->setWindowTitle("nappi");
 }
 
 Widget::~Widget()
