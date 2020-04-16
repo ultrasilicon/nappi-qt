@@ -15,12 +15,15 @@ public:
   ~Window();
 
 private:
+  void onMessage();
+
   QMenu *tray_icon_menu;
   QAction *wake_action;
   QAction *show_action;
   QAction *quit_action;
   QSystemTrayIcon *tray_icon;
 
+  QHostAddress server_address;
   QUdpSocket* udp_socket;
   quint16 port = 65282;
 };

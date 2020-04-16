@@ -3,7 +3,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QCoreApplication>
-
+#include <QNetworkDatagram>
 
 Window::Window(QWidget *parent)
   : QWidget(parent)
@@ -12,6 +12,7 @@ Window::Window(QWidget *parent)
   , show_action(new QAction(tr("&Settings"), this))
   , quit_action(new QAction(tr("&Quit"), this))
   , tray_icon(new QSystemTrayIcon(this))
+  , server_address(QHostAddress("10.10.10.47"))
   , udp_socket(new QUdpSocket(this))
 {
   wake_action->setCheckable(true);
@@ -29,12 +30,15 @@ Window::Window(QWidget *parent)
   tray_icon->setVisible(true);
   tray_icon->show();
 
+  udp_socket->bind(QHostAddress("0.0.0.0"), port);
+
   connect(quit_action, &QAction::triggered, this, &QCoreApplication::quit);
   connect(show_action, &QAction::triggered, this, &QWidget::show);
+  connect(udp_socket, &QUdpSocket::readyRead, this, &Window::onMessage);
 
   QTimer* timer = new QTimer(this);
   connect(timer, &QTimer::timeout, [&](){
-      udp_socket->writeDatagram("{\"type\": \"wake\", \"version\": \"0.0.1\"}", QHostAddress("10.10.10.47"), port);
+      udp_socket->writeDatagram("{\"type\": \"wake\", \"version\": \"0.0.1\"}", server_address, port);
     });
   timer->setInterval(300);
   timer->start();
@@ -44,5 +48,13 @@ Window::Window(QWidget *parent)
 
 Window::~Window()
 {
+}
+
+void Window::onMessage()
+{
+  while (udp_socket->hasPendingDatagrams()) {
+      QByteArray data = udp_socket->receiveDatagram().data();
+//      qDebug() << data;
+  }
 }
 
