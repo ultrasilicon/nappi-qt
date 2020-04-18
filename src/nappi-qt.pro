@@ -20,6 +20,7 @@ SOURCES += \
     window.cpp
 
 HEADERS += \
+    version.h \
     window.h
 
 # Default rules for deployment.

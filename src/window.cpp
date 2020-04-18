@@ -1,9 +1,12 @@
 #include "window.h"
+#include "version.h"
 
 #include <QTimer>
+#include <QJsonDocument>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QNetworkDatagram>
+
 
 Window::Window(QWidget *parent)
   : QWidget(parent)
@@ -22,7 +25,7 @@ Window::Window(QWidget *parent)
   tray_icon_menu->addSeparator();
   tray_icon_menu->addAction(quit_action);
 
-  QIcon icon(":/img/img/icon_tray_black.png");
+  QIcon icon(":/img/img/icon_tray_white.png");
   icon.setIsMask(true);
   tray_icon->setIcon(icon);
   tray_icon->setToolTip("nappi");
@@ -54,7 +57,14 @@ void Window::onMessage()
 {
   while (udp_socket->hasPendingDatagrams()) {
       QByteArray data = udp_socket->receiveDatagram().data();
-//      qDebug() << data;
+      QJsonParseError jsonErr;
+      QJsonDocument message = QJsonDocument::fromJson(data, &jsonErr);
+      if(jsonErr.error == QJsonParseError::NoError && message.isObject()) {
+        if(message["version"].toString() != VERSION_STR)
+          return;
+        if(message["type"].toString() == "heartbeat")
+          qDebug() << "heart beat";
+      }
   }
 }
 
