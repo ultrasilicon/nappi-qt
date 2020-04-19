@@ -6,11 +6,15 @@
 
 # nappi-qt
 
-**The cross-platform plugin that helps you remote switch your Raspberry Pi screen**
+**The cross-platform plugin that helps you remote switch your Raspberry Pi display**
 
-* switch on/off Raspberry Pi screen backlight when your computer sleeps/wakes up
+* This app is a GUI client of [nappi](https://github.com/ultrasilicon/nappi)
+* Install and run [nappi](https://github.com/ultrasilicon/nappi) on your Raspberry Pi, and remote control your Pi display with `nappi-qt`!
+
+## Features
+* switch on/off Raspberry Pi display backlight when your computer sleeps/wakes up
 * monitor Raspberry Pi online status with nappi-qt's tray icon
-* (coming soon) manual remote control Raspberry Pi screen backlight 
+* (coming soon) manual remote control Raspberry Pi display backlight 
 
 ## Installation
 
