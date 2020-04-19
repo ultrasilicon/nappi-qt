@@ -17,6 +17,7 @@ Window::Window(QWidget *parent)
   , tray_icon(new QSystemTrayIcon(this))
   , server_address(QHostAddress("10.10.10.47"))
   , udp_socket(new QUdpSocket(this))
+  , offline_timer(new QTimer(this))
 {
   wake_action->setCheckable(true);
   wake_action->setChecked(false);
@@ -25,26 +26,37 @@ Window::Window(QWidget *parent)
   tray_icon_menu->addSeparator();
   tray_icon_menu->addAction(quit_action);
 
-  QIcon icon(":/img/img/icon_tray_white.png");
-  icon.setIsMask(true);
-  tray_icon->setIcon(icon);
   tray_icon->setToolTip("nappi");
   tray_icon->setContextMenu(tray_icon_menu);
+  this->refreshTrayIcon();
   tray_icon->setVisible(true);
   tray_icon->show();
 
   udp_socket->bind(QHostAddress("0.0.0.0"), port);
 
+  offline_timer->setInterval(1000);
+  offline_timer->start();
+
   connect(quit_action, &QAction::triggered, this, &QCoreApplication::quit);
   connect(show_action, &QAction::triggered, this, &QWidget::show);
   connect(udp_socket, &QUdpSocket::readyRead, this, &Window::onMessage);
+  connect(offline_timer, &QTimer::timeout, [&](){
+      using namespace std::chrono;
+      int64_t now = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+      if(now - offline_timestamp > offline_timeout) {
+          qDebug()<<"bad";
+          pi_state = Offline;
+          refreshTrayIcon();
+        }
+    });
 
-  QTimer* timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, [&](){
+
+  QTimer* wakeTimer = new QTimer(this);
+  connect(wakeTimer, &QTimer::timeout, [&](){
       udp_socket->writeDatagram("{\"type\": \"wake\", \"version\": \"0.0.1\"}", server_address, port);
     });
-  timer->setInterval(300);
-  timer->start();
+  wakeTimer->setInterval(300);
+  wakeTimer->start();
 
   this->setWindowTitle("nappi");
 }
@@ -62,9 +74,23 @@ void Window::onMessage()
       if(jsonErr.error == QJsonParseError::NoError && message.isObject()) {
         if(message["version"].toString() != VERSION_STR)
           return;
-        if(message["type"].toString() == "heartbeat")
-          qDebug() << "heart beat";
+        if(message["type"].toString() == "heartbeat") {
+          if(pi_state != Online) {
+            pi_state = Online;
+            refreshTrayIcon();
+          }
+          using namespace std::chrono;
+          offline_timestamp = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+
+        }
       }
-  }
+    }
+}
+
+void Window::refreshTrayIcon()
+{
+  QIcon icon(pi_state == Online ? ":/img/img/tray_online_light.png" : ":/img/img/tray_offline_light.png");
+  icon.setIsMask(true);
+  tray_icon->setIcon(icon);
 }
 
