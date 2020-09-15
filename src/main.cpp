@@ -1,11 +1,7 @@
-#include "window.h"
-
-#include <QApplication>
+#include "app.h"
 
 int main(int argc, char *argv[])
 {
-  QApplication a(argc, argv);
-  QApplication::setQuitOnLastWindowClosed(false);
-  Window w;
+  App a(argc, argv);
   return a.exec();
 }

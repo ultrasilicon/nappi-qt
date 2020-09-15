@@ -16,10 +16,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    app.cpp \
+    config.cpp \
     main.cpp \
+    service.cpp \
     window.cpp
 
 HEADERS += \
+    app.h \
+    config.h \
+    service.h \
     version.h \
     window.h
 
@@ -40,4 +46,21 @@ macx{
     plist.path = "$$DESTDIR/$$join(TARGET,,,.app)/Contents"
     plist.files = ./Info.plist
     INSTALLS += plist
+
+    PKG_CONFIG = /usr/local/bin/pkg-config
+
+}
+
+unix{
+    CONFIG += link_pkgconfig
+
+    CONFIG(debug, debug|release) {
+        PKGCONFIG += \
+            libagio-d
+    }
+
+    CONFIG(release, debug|release) {
+        PKGCONFIG += \
+            libagio
+    }
 }
