@@ -8,6 +8,9 @@ App::App(int &argc, char **argv)
 {
   service->start();
   this->setQuitOnLastWindowClosed(false);
+
+  qRegisterMetaType<PiState>("PiState");
+  connect(service, &Service::piStateChanged, window, &Window::onPiStateChanged);
 }
 
 App::~App()

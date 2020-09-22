@@ -2,6 +2,7 @@
 #define WIDGET_H
 
 #include "config.h"
+#include "common.h"
 
 #include <QWidget>
 #include <QMenu>
@@ -15,6 +16,8 @@ class Window : public QWidget
 public:
   Window(Config* config, QWidget *parent = nullptr);
   ~Window();
+
+  void onPiStateChanged(PiState state);
 
 private:
   void onMessage();

@@ -2,6 +2,7 @@
 #define SERVICE_H
 
 #include "config.h"
+#include "common.h"
 
 #include <libagio/udp_socket.h>
 #include <libagio/timer.h>
@@ -15,11 +16,6 @@ class Service
   Q_OBJECT
 
 public:
-  enum PiState {
-    Online = 0,
-    Offline,
-  };
-
   Service(Config* config, QObject* parent = nullptr);
 
 protected:
@@ -36,9 +32,12 @@ private:
   Agio::HostAddress server_address;
   uint16_t port = 65282;
 
-  PiState pi_state = Offline;
-  int64_t offline_timestamp;
+  PiState pi_state = PiState::Offline;
   Config* config;
+  int64_t offline_timestamp;
+
+signals:
+  void piStateChanged(PiState);
 };
 
 #endif // SERVICE_H

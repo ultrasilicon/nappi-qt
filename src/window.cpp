@@ -22,6 +22,7 @@ Window::Window(Config* config, QWidget *parent)
   tray_icon_menu->addSeparator();
   tray_icon_menu->addAction(quit_action);
 
+  this->refreshTrayIcon(false);
   tray_icon->setToolTip("nappi");
   tray_icon->setContextMenu(tray_icon_menu);
   tray_icon->setVisible(true);
@@ -31,11 +32,15 @@ Window::Window(Config* config, QWidget *parent)
   connect(show_action, &QAction::triggered, this, &QWidget::show);
 
   this->setWindowTitle("nappi");
-  this->refreshTrayIcon(false);
 }
 
 Window::~Window()
 {
+}
+
+void Window::onPiStateChanged(PiState state)
+{
+  refreshTrayIcon(state == PiState::Online);
 }
 
 void Window::onMessage()
